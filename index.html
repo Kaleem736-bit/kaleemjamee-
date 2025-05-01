@@ -2,577 +2,444 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة TRX المتكاملة</title>
+    <title>Flash Wallet - المفشوع</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* الأساسيات */
         :root {
-            --primary: #6a11cb;
-            --secondary: #2575fc;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --dark: #2d2d2d;
-            --light: #f8f9fa;
-            --radius: 15px;
+            --primary: #2563eb;
+            --secondary: #1e293b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --text: #1e293b;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Tajawal', sans-serif;
         }
 
         body {
-            background: var(--light);
-            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
         }
 
         .container {
-            max-width: 500px;
+            max-width: 480px;
             margin: 0 auto;
-            padding: 20px;
-            padding-bottom: 80px;
+            padding: 1rem;
         }
 
+        /* التنقل بين الصفحات */
         .page {
             display: none;
-            animation: slideIn 0.3s ease;
+            animation: slideIn 0.3s ease-out;
         }
 
         .page.active {
             display: block;
         }
 
-        .card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .input-field {
+        /* تصميم النماذج */
+        .auth-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-round {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: var(--radius);
-            margin: 10px 0;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 1rem;
             transition: all 0.3s;
         }
 
-        .input-field:focus {
+        .input-round:focus {
             border-color: var(--primary);
             outline: none;
         }
 
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        /* تصميم المحفظة */
+        .wallet-header {
+            background: linear-gradient(135deg, var(--primary), #1e40af);
             color: white;
+            padding: 2rem;
+            border-radius: 25px;
+            margin-bottom: 1rem;
         }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .nav-tabs {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-        }
-
-        .tab-item {
-            position: relative;
-            text-align: center;
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .tab-item.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .transaction-item {
-            background: white;
-            padding: 15px;
-            border-radius: var(--radius);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .stats-container {
+        .wallet-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .stat-item {
-            background: white;
-            padding: 15px;
-            border-radius: var(--radius);
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 15px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .asset-list {
+        /* أزرار التحكم */
+        .quick-actions {
             display: grid;
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
         }
 
-        .asset-item {
+        .action-btn {
             background: white;
-            padding: 15px;
-            border-radius: var(--radius);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
+            padding: 1rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.3s;
+            cursor: pointer;
         }
 
-        .vote-item {
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* لوحة المشرف */
+        .admin-panel {
+            background: var(--secondary);
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* الإشعارات */
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
             background: white;
-            padding: 15px;
-            border-radius: var(--radius);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease-out;
         }
     </style>
 </head>
 <body>
-    <!-- صفحات النظام -->
-    <div class="container page" id="loginPage">
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">تسجيل الدخول</h2>
-            <input type="text" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" id="loginId">
-            <input type="password" class="input-field" placeholder="كلمة المرور" id="loginPassword">
-            <button class="btn btn-primary" onclick="login()">تسجيل الدخول</button>
-            <p style="text-align: center; margin-top: 15px; cursor: pointer;" onclick="showPage('registerPage')">إنشاء حساب جديد</p>
-        </div>
-    </div>
-
-    <div class="container page" id="registerPage">
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">إنشاء حساب جديد</h2>
-            <input type="text" class="input-field" placeholder="الاسم الرباعي" id="fullName">
-            <input type="email" class="input-field" placeholder="البريد الإلكتروني" id="email">
-            <input type="tel" class="input-field" placeholder="رقم الهاتف" id="phone">
-            <input type="password" class="input-field" placeholder="كلمة المرور" id="password">
-            <input type="password" class="input-field" placeholder="تأكيد كلمة المرور" id="confirmPassword">
-            <button class="btn btn-primary" onclick="register()">إنشاء حساب</button>
-            <p style="text-align: center; margin-top: 15px; cursor: pointer;" onclick="showPage('loginPage')">لديك حساب؟ تسجيل الدخول</p>
-        </div>
-    </div>
-
-    <div class="container page" id="walletPage">
-        <div class="card">
-            <div style="text-align: center;">
-                <h3 id="userName"></h3>
-                <p style="color: #666; margin-top: 10px;" id="walletAddress"></p>
-            </div>
-
-            <div style="text-align: center; margin: 20px 0;">
-                <h2 style="color: var(--primary);" id="balanceTRX">0 TRX</h2>
-                <p style="color: #666;" id="balanceUSD">$0.00</p>
-            </div>
-
-            <div class="stats-container">
-                <div class="stat-item">
-                    <small>الطاقة</small>
-                    <h3 id="energyValue">0</h3>
-                </div>
-                <div class="stat-item">
-                    <small>النطاق</small>
-                    <h3 id="bandwidthValue">0</h3>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                <button class="btn btn-primary" onclick="showPage('sendPage')">إرسال</button>
-                <button class="btn btn-success" onclick="showPage('receivePage')">استلام</button>
-                <button class="btn btn-primary" onclick="showPage('votePage')">تصويت</button>
-                <button class="btn btn-success" onclick="stakeFunds()">Stake</button>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <h4 style="margin-bottom: 15px;">الأصول</h4>
-                <div class="asset-list" id="assetsList"></div>
+    <!-- صفحات التطبيق -->
+    <div id="registerPage" class="page">
+        <div class="container">
+            <div class="auth-form">
+                <h2>إنشاء حساب جديد</h2>
+                <form id="registerForm" onsubmit="registerUser(event)">
+                    <div class="form-group">
+                        <input type="text" class="input-round" placeholder="الاسم الرباعي" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="input-round" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" class="input-round" placeholder="رقم الهاتف" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="input-round" placeholder="كلمة المرور" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="input-round" placeholder="تأكيد كلمة المرور" required>
+                    </div>
+                    <button type="submit" class="input-round" style="background: var(--primary); color: white;">التسجيل</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <div class="container page" id="sendPage">
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">إرسال أموال</h2>
-            <select class="input-field" id="sendCurrency">
-                <option value="TRX">TRX</option>
-                <option value="USDT">USDT</option>
-                <option value="USDD">USDD</option>
-            </select>
-            <input type="text" class="input-field" placeholder="عنوان المحفظة المستقبلة" id="receiverAddress">
-            <input type="number" class="input-field" placeholder="المبلغ" id="sendAmount">
-            <button class="btn btn-primary" onclick="sendFunds()">إرسال الآن</button>
-            <p style="text-align: center; margin-top: 15px; cursor: pointer;" onclick="showPage('walletPage')">رجوع</p>
+    <div id="loginPage" class="page">
+        <div class="container">
+            <div class="auth-form">
+                <h2>تسجيل الدخول</h2>
+                <form id="loginForm" onsubmit="loginUser(event)">
+                    <div class="form-group">
+                        <input type="text" class="input-round" placeholder="البريد أو الهاتف" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="input-round" placeholder="كلمة المرور" required>
+                    </div>
+                    <button type="submit" class="input-round" style="background: var(--primary); color: white;">الدخول</button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="container page" id="receivePage">
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">استلام أموال</h2>
-            <div style="text-align: center; margin: 20px 0;">
-                <p style="font-weight: bold;" id="receiveAddress"></p>
-                <div style="background: #eee; padding: 15px; border-radius: var(--radius); margin: 20px 0;">
-                    <i class="fas fa-qrcode" style="font-size: 100px;"></i>
-                </div>
-                <p style="color: #666;">استخدم هذا العنوان لاستلام الأموال</p>
-            </div>
-            <p style="text-align: center; cursor: pointer;" onclick="showPage('walletPage')">رجوع</p>
-        </div>
-    </div>
-
-    <div class="container page" id="transactionsPage">
-        <div class="card">
-            <h2 style="text-align: center;">سجل المعاملات</h2>
-            <div style="display: flex; gap: 10px; margin: 15px 0;">
-                <button class="btn btn-primary" onclick="filterTransactions('all')">الكل</button>
-                <button class="btn btn-success" onclick="filterTransactions('received')">الواردة</button>
-                <button class="btn btn-danger" onclick="filterTransactions('sent')">الصادرة</button>
-            </div>
-            <div id="transactionsContainer"></div>
-            <p style="text-align: center; margin-top: 15px; cursor: pointer;" onclick="showPage('walletPage')">رجوع</p>
-        </div>
-    </div>
-
-    <div class="container page" id="profilePage">
-        <div class="card">
-            <h2 style="text-align: center;">الملف الشخصي</h2>
-            <div style="text-align: center; margin: 20px 0;">
-                <div style="width: 100px; height: 100px; background: #eee; border-radius: 50%; margin: 0 auto;"></div>
-                <h3 style="margin-top: 10px;" id="profileName"></h3>
-            </div>
-
-            <div class="input-field" id="profileEmail"></div>
-            <div class="input-field" id="profilePhone"></div>
-            <div class="input-field" id="profileWallet"></div>
-
-            <div class="stats-container">
-                <div class="stat-item">
-                    <small>إجمالي الإرسال</small>
-                    <h3 id="totalSent">0</h3>
-                </div>
-                <div class="stat-item">
-                    <small>إجمالي الاستلام</small>
-                    <h3 id="totalReceived">0</h3>
+    <div id="dashboardPage" class="page">
+        <div class="container">
+            <div class="wallet-header">
+                <h2>مرحبا بك، <span id="userName"></span></h2>
+                <div class="wallet-stats">
+                    <div class="stat-item">
+                        <h4>الرصيد الإجمالي</h4>
+                        <p id="totalBalance">$0.00</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>المحفظة</h4>
+                        <p id="walletAddress">T...1234</p>
+                    </div>
                 </div>
             </div>
 
-            <button class="btn btn-danger" onclick="logout()">تسجيل الخروج</button>
-            <p style="text-align: center; margin-top: 15px; cursor: pointer;" onclick="showPage('walletPage')">رجوع</p>
+            <div class="quick-actions">
+                <div class="action-btn" onclick="showSendForm()">
+                    <i class="fas fa-paper-plane"></i>
+                    <p>إرسال</p>
+                </div>
+                <div class="action-btn" onclick="showReceiveForm()">
+                    <i class="fas fa-qrcode"></i>
+                    <p>استلام</p>
+                </div>
+                <div class="action-btn" onclick="showVote()">
+                    <i class="fas fa-vote-yea"></i>
+                    <p>تصويت</p>
+                </div>
+                <div class="action-btn" onclick="showStake()">
+                    <i class="fas fa-coins"></i>
+                    <p>Stake</p>
+                </div>
+            </div>
+
+            <!-- نموذج الإرسال -->
+            <div id="sendForm" class="auth-form" style="display: none;">
+                <h3>إرسال أموال</h3>
+                <select class="input-round" id="sendCurrency">
+                    <option value="USDT">FLASH USDT</option>
+                    <option value="TRX">TRX</option>
+                    <option value="USDD">USDD</option>
+                </select>
+                <input type="text" class="input-round" id="receiverAddress" placeholder="عنوان المحفظة">
+                <input type="number" class="input-round" id="sendAmount" step="0.000001">
+                <button class="input-round" style="background: var(--primary); color: white;" onclick="sendTransaction()">إرسال</button>
+            </div>
+
+            <!-- سجل التحويلات -->
+            <div class="auth-form">
+                <h3>سجل المعاملات</h3>
+                <div id="transactionHistory"></div>
+            </div>
         </div>
     </div>
 
-    <div class="container page" id="votePage">
-        <div class="card">
-            <h2 style="text-align: center;">نظام التصويت</h2>
-            <div class="asset-list" id="candidatesList"></div>
-            <p style="text-align: center; margin-top: 15px; cursor: pointer;" onclick="showPage('walletPage')">رجوع</p>
+    <!-- لوحة المشرف -->
+    <div id="adminPage" class="page">
+        <div class="admin-panel">
+            <h2>لوحة التحكم الإدارية</h2>
+            <div class="admin-actions">
+                <button onclick="adminSendFunds()" class="input-round">إرسال أموال</button>
+                <button onclick="viewAllTransactions()" class="input-round">عرض جميع التحويلات</button>
+            </div>
+            <div id="adminUsersList"></div>
         </div>
-    </div>
-
-    <div class="nav-tabs">
-        <div class="tab-item active" onclick="showPage('walletPage')"><i class="fas fa-home"></i></div>
-        <div class="tab-item" onclick="showPage('transactionsPage')"><i class="fas fa-exchange-alt"></i></div>
-        <div class="tab-item" onclick="showPage('votePage')"><i class="fas fa-vote-yea"></i></div>
-        <div class="tab-item" onclick="showPage('profilePage')"><i class="fas fa-user"></i></div>
     </div>
 
     <script>
+        // نظام التطبيق
         let currentUser = null;
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-        const candidates = [
-            { id: 1, name: 'مرشح 1', votes: 0 },
-            { id: 2, name: 'مرشح 2', votes: 0 },
-            { id: 3, name: 'مرشح 3', votes: 0 }
-        ];
+        let users = JSON.parse(localStorage.getItem('flash_users')) || [];
+        let transactions = JSON.parse(localStorage.getItem('flash_tx')) || [];
+        const adminCode = '12345';
+        const adminFunds = { USDT: 10000, TRX: 10000, USDD: 10000 };
 
         // إدارة الصفحات
         function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            updateNavTabs(pageId);
-            if(pageId === 'walletPage') updateWalletDisplay();
-            if(pageId === 'transactionsPage') loadTransactions();
-            if(pageId === 'profilePage') updateProfile();
-            if(pageId === 'votePage') loadCandidates();
         }
 
-        function updateNavTabs(activePage) {
-            document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
-            const tabMap = {
-                'walletPage': 0,
-                'transactionsPage': 1,
-                'votePage': 2,
-                'profilePage': 3
-            };
-            document.querySelectorAll('.tab-item')[tabMap[activePage]]?.classList.add('active');
-        }
+        // تسجيل مستخدم جديد
+        function registerUser(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            if(formData.get('password') !== formData.get('confirm_password')) {
+                showNotification('كلمة المرور غير متطابقة!', 'danger');
+                return;
+            }
 
-        // نظام المستخدمين
-        function register() {
             const user = {
                 id: Date.now(),
-                name: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                password: document.getElementById('password').value,
-                walletAddress: 'TRX' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-                balance: { TRX: 1000, USDT: 0, USDD: 0 },
-                energy: 350,
-                bandwidth: 500,
-                transactions: [],
-                notifications: []
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                password: formData.get('password'),
+                wallet: generateWalletAddress(),
+                balance: { USDT: 0, TRX: 0, USDD: 0 },
+                transactions: []
             };
 
             users.push(user);
-            localStorage.setItem('users', JSON.stringify(users));
-            alert('تم إنشاء الحساب بنجاح!');
-            currentUser = user;
-            showPage('walletPage');
-            updateWalletDisplay();
+            localStorage.setItem('flash_users', JSON.stringify(users));
+            showNotification('تم التسجيل بنجاح!', 'success');
+            showPage('loginPage');
         }
 
-        function login() {
-            const loginId = document.getElementById('loginId').value;
-            const password = document.getElementById('loginPassword').value;
+        // تسجيل الدخول
+        function loginUser(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const identifier = formData.get('email');
+            const password = formData.get('password');
 
             currentUser = users.find(u => 
-                (u.email === loginId || u.phone === loginId) && 
+                (u.email === identifier || u.phone === identifier) && 
                 u.password === password
             );
 
             if(currentUser) {
-                showPage('walletPage');
-                updateWalletDisplay();
+                showDashboard();
             } else {
-                alert('بيانات الدخول غير صحيحة!');
+                showNotification('بيانات الدخول غير صحيحة!', 'danger');
             }
         }
 
-        function logout() {
-            currentUser = null;
-            showPage('loginPage');
-        }
-
-        // إدارة المحفظة
-        function updateWalletDisplay() {
+        // عرض لوحة التحكم
+        function showDashboard() {
             document.getElementById('userName').textContent = currentUser.name;
-            document.getElementById('walletAddress').textContent = currentUser.walletAddress;
-            document.getElementById('balanceTRX').textContent = `${currentUser.balance.TRX} TRX`;
-            document.getElementById('balanceUSD').textContent = `$${(currentUser.balance.TRX * 0.07).toFixed(2)}`;
-            document.getElementById('receiveAddress').textContent = currentUser.walletAddress;
-            document.getElementById('energyValue').textContent = currentUser.energy;
-            document.getElementById('bandwidthValue').textContent = currentUser.bandwidth;
-            
-            // تحديث قائمة الأصول
-            const assetsList = document.getElementById('assetsList');
-            assetsList.innerHTML = '';
-            Object.entries(currentUser.balance).forEach(([currency, balance]) => {
-                assetsList.innerHTML += `
-                    <div class="asset-item">
-                        <div>${currency}</div>
-                        <div>${balance}</div>
-                    </div>
-                `;
-            });
+            document.getElementById('walletAddress').textContent = currentUser.wallet;
+            updateBalances();
+            loadTransactions();
+            showPage('dashboardPage');
+            startRealTimeUpdates();
         }
 
-        // نظام التحويلات
-        async function sendFunds() {
-            const receiverAddress = document.getElementById('receiverAddress').value;
+        // تحديث الأرصدة
+        function updateBalances() {
+            const total = currentUser.balance.TRX * 0.076 + 
+                        currentUser.balance.USDT + 
+                        currentUser.balance.USDD;
+            
+            document.getElementById('totalBalance').textContent = 
+                `${total.toFixed(2)} $`;
+        }
+
+        // إرسال تحويل
+        function sendTransaction() {
             const amount = parseFloat(document.getElementById('sendAmount').value);
             const currency = document.getElementById('sendCurrency').value;
+            const receiver = document.getElementById('receiverAddress').value;
 
-            if(!receiverAddress || !amount) return alert('الرجاء ملء جميع الحقول');
+            if(amount > currentUser.balance[currency]) {
+                showNotification('الرصيد غير كافي!', 'danger');
+                return;
+            }
 
-            const receiver = users.find(u => u.walletAddress === receiverAddress);
-            
-            if(!receiver) return alert('عنوان المحفظة غير صحيح');
-            if(currentUser.balance[currency] < amount) return alert('الرصيد غير كافي');
-
-            // إجراء التحويل
-            currentUser.balance[currency] -= amount;
-            receiver.balance[currency] += amount;
-
-            // تسجيل المعاملة
-            const transaction = {
+            const tx = {
                 id: Date.now(),
-                from: currentUser.walletAddress,
-                to: receiverAddress,
+                type: 'send',
+                from: currentUser.wallet,
+                to: receiver,
                 amount,
                 currency,
-                date: new Date().toISOString(),
+                date: new Date(),
                 status: 'مكتمل'
             };
 
-            transactions.push(transaction);
-            currentUser.transactions.push(transaction.id);
-            receiver.transactions.push(transaction.id);
-
-            // إرسال الإشعارات
-            createNotification(currentUser, 'sent', amount, currency, receiverAddress);
-            createNotification(receiver, 'received', amount, currency, currentUser.walletAddress);
-
-            // حفظ التحديثات
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('transactions', JSON.stringify(transactions));
+            currentUser.balance[currency] -= amount;
+            currentUser.transactions.push(tx);
             
-            alert(`تم إرسال ${amount} ${currency} بنجاح!`);
-            showPage('walletPage');
-            updateWalletDisplay();
+            // إضافة الرصيد للمستلم
+            const receiverUser = users.find(u => u.wallet === receiver);
+            if(receiverUser) {
+                receiverUser.balance[currency] += amount;
+                receiverUser.transactions.push({
+                    ...tx,
+                    type: 'receive',
+                    status: 'مستلم'
+                });
+                showNotification(`تم استلام ${amount} ${currency}`, 'success', receiverUser);
+            }
+
+            localStorage.setItem('flash_users', JSON.stringify(users));
+            updateBalances();
             loadTransactions();
+            showNotification(`تم الإرسال بنجاح!`, 'success');
         }
 
-        function createNotification(user, type, amount, currency, address) {
-            const notification = {
-                id: Date.now(),
-                type,
-                amount,
-                currency,
-                address,
-                date: new Date().toISOString(),
-                read: false
-            };
-            user.notifications.push(notification);
+        // عرض الإشعارات
+        function showNotification(message, type, user = null) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            if(user) {
+                // إرسال إشعار push للمستلم
+                if(user.notifications) {
+                    user.notifications.push({
+                        message: `تم استلام ${message}`,
+                        date: new Date()
+                    });
+                }
+            }
+
+            setTimeout(() => notification.remove(), 3000);
         }
 
-        // نظام المعاملات
-        function loadTransactions(filter = 'all') {
-            const container = document.getElementById('transactionsContainer');
-            container.innerHTML = '';
-            
-            const userTransactions = transactions.filter(t => 
-                currentUser.transactions.includes(t.id) &&
-                (filter === 'all' || 
-                (filter === 'sent' && t.from === currentUser.walletAddress) ||
-                (filter === 'received' && t.to === currentUser.walletAddress))
-            );
-
-            userTransactions.forEach(t => {
-                const isSent = t.from === currentUser.walletAddress;
-                container.innerHTML += `
-                    <div class="transaction-item">
-                        <div>
-                            <i class="fas fa-${isSent ? 'arrow-up' : 'arrow-down'}"></i>
-                            ${isSent ? 'إرسال إلى' : 'استلام من'}
-                            <br>
-                            <small>${t.date}</small>
-                        </div>
-                        <div style="color: ${isSent ? 'var(--danger)' : 'var(--success)'}">
-                            ${isSent ? '-' : '+'}${t.amount} ${t.currency}
-                        </div>
-                    </div>
-                `;
-            });
+        // نظام المشرف
+        function adminLogin() {
+            const code = prompt('أدخل رمز المشرف:');
+            if(code === adminCode) {
+                showPage('adminPage');
+                loadAdminData();
+            }
         }
 
-        // نظام التصويت
-        function loadCandidates() {
-            const list = document.getElementById('candidatesList');
-            list.innerHTML = candidates.map(candidate => `
-                <div class="vote-item">
-                    <div>${candidate.name}</div>
-                    <button class="btn btn-primary" onclick="voteForCandidate(${candidate.id})">
-                        تصويت (10 TRX)
-                    </button>
+        // تحميل بيانات المشرف
+        function loadAdminData() {
+            document.getElementById('adminUsersList').innerHTML = users.map(user => `
+                <div class="admin-user">
+                    <h3>${user.name}</h3>
+                    <p>المحفظة: ${user.wallet}</p>
+                    <p>الرصيد: ${JSON.stringify(user.balance)}</p>
                 </div>
             `).join('');
         }
 
-        function voteForCandidate(candidateId) {
-            if(currentUser.balance.TRX < 10) return alert('تحتاج إلى 10 TRX على الأقل للتصويت');
-            
-            currentUser.balance.TRX -= 10;
-            candidates.find(c => c.id === candidateId).votes++;
-            localStorage.setItem('users', JSON.stringify(users));
-            updateWalletDisplay();
-            alert('تم التصويت بنجاح!');
+        // توليد عنوان محفظة
+        function generateWalletAddress() {
+            return 'T' + Math.random().toString(36).substr(2, 25).toUpperCase();
         }
 
-        // تحديث الملف الشخصي
-        function updateProfile() {
-            document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileEmail').textContent = currentUser.email;
-            document.getElementById('profilePhone').textContent = currentUser.phone;
-            document.getElementById('profileWallet').textContent = currentUser.walletAddress;
-            
-            const totalSent = transactions
-                .filter(t => t.from === currentUser.walletAddress)
-                .reduce((sum, t) => sum + t.amount, 0);
-            
-            const totalReceived = transactions
-                .filter(t => t.to === currentUser.walletAddress)
-                .reduce((sum, t) => sum + t.amount, 0);
-
-            document.getElementById('totalSent').textContent = totalSent;
-            document.getElementById('totalReceived').textContent = totalReceived;
+        // التحديثات الوقت الحقيقي
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                // محاكاة تغيرات السوق
+                updateBalances();
+            }, 5000);
         }
 
         // التهيئة الأولية
-        showPage('loginPage');
+        function init() {
+            if(localStorage.getItem('flash_users') === null) {
+                localStorage.setItem('flash_users', JSON.stringify([]));
+            }
+            showPage('registerPage');
+        }
+
+        // بدء التشغيل
+        init();
     </script>
 </body>
 </html>
